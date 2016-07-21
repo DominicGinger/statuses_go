@@ -10,6 +10,7 @@ import (
 var errCodes = map[int]string{
 	404: "Not Found",
 	422: "Unprocessable Entity",
+	500: "Internal Error",
 }
 
 type router struct{}
