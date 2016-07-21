@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -20,6 +21,22 @@ type route struct {
 }
 
 var routes = map[string]route{}
+
+func routesMap() []map[string]string {
+	r := []map[string]string{}
+	for _, v := range routes {
+		m := map[string]string{
+			"url":    v.url,
+			"params": strings.Join(v.params[:], ","),
+		}
+		r = append(r, m)
+	}
+	return r
+}
+
+func addRoute(url string, params []string, handler func(http.ResponseWriter, *http.Request, map[string]string)) {
+	routes[url] = route{handler, params, url}
+}
 
 func processURL(uri *url.URL) (string, map[string]string) {
 	url := uri.EscapedPath()
@@ -68,14 +85,14 @@ func resolveURL(uri *url.URL) (rte route, params map[string]string, code int) {
 
 func (*router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	rte, params, code := resolveURL(r.URL)
+	rte, p, code := resolveURL(r.URL)
 	if code != 200 {
 		httpError(w, rte.url, code)
 		return
 	}
 
 	start := time.Now()
-	rte.handler(w, r, params)
+	rte.handler(w, r, p)
 	elapsed := time.Since(start)
 	logger.info.Printf("%v - Elapsed: %v\n", rte.url, elapsed)
 }

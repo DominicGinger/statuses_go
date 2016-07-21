@@ -8,8 +8,7 @@ import (
 )
 
 func root(w http.ResponseWriter, r *http.Request, p map[string]string) {
-	res := map[string]string{"Page:": "/"}
-	json.NewEncoder(w).Encode(res)
+	json.NewEncoder(w).Encode(routesMap())
 }
 
 func showTime(w http.ResponseWriter, r *http.Request, p map[string]string) {
@@ -26,9 +25,16 @@ func showTime(w http.ResponseWriter, r *http.Request, p map[string]string) {
 	json.NewEncoder(w).Encode(res)
 }
 
+func headerInfo(w http.ResponseWriter, r *http.Request, p map[string]string) {
+	r.Write(w)
+}
+
 func main() {
-	routes["/"] = route{root, []string{}, "/"}
-	routes["/time"] = route{showTime, []string{"in"}, "/time"}
-	logger.info.Println("Starting server")
-	startServer(":" + os.Getenv("PORT"))
+	addRoute("/", []string{}, root)
+	addRoute("/time", []string{"in"}, showTime)
+	addRoute("/who", []string{}, headerInfo)
+
+	port := os.Getenv("PORT")
+	logger.info.Printf("Starting server on port: %v\n", port)
+	startServer(":" + port)
 }
