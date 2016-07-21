@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -29,5 +30,5 @@ func main() {
 	routes["/"] = route{root, []string{}, "/"}
 	routes["/time"] = route{showTime, []string{"in"}, "/time"}
 	logger.info.Println("Starting server")
-	startServer(3000)
+	startServer(":" + os.Getenv("PORT"))
 }

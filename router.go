@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -81,6 +80,6 @@ func (*router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	logger.info.Printf("%v - Elapsed: %v\n", rte.url, elapsed)
 }
 
-func startServer(port int) {
-	http.ListenAndServe(fmt.Sprintf(":%v", port), &router{})
+func startServer(port string) {
+	http.ListenAndServe(port, &router{})
 }
