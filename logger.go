@@ -6,12 +6,17 @@ import (
 )
 
 type loggerStruct struct {
-	info *log.Logger
-	warn *log.Logger
-	err  *log.Logger
+	debug *log.Logger
+	err   *log.Logger
+	info  *log.Logger
+	warn  *log.Logger
 }
 
 const enableLog = true
+const CLR_R = "\x1b[31;1m"
+const CLR_Y = "\x1b[33;1m"
+const CLR_B = "\x1b[34;1m"
+const CLR_N = "\x1b[0m"
 
 func createLogger(prefix string, out *os.File) *log.Logger {
 	if !enableLog {
@@ -21,7 +26,8 @@ func createLogger(prefix string, out *os.File) *log.Logger {
 }
 
 var logger = loggerStruct{
-	info: createLogger("[INFO] ", os.Stdout),
-	warn: createLogger("[WARN] ", os.Stdout),
-	err:  createLogger("[ERROR] ", os.Stderr),
+	debug: createLogger(CLR_B+"[DEBUG] ", os.Stdout),
+	err:   createLogger(CLR_R+"[ERROR] ", os.Stderr),
+	info:  createLogger(CLR_N+"[INFO] ", os.Stdout),
+	warn:  createLogger(CLR_Y+"[WARN] ", os.Stdout),
 }

@@ -23,16 +23,14 @@ type route struct {
 
 var routes = map[string]route{}
 
-func routesMap() []map[string]string {
-	r := []map[string]string{}
+func routesByte() []byte {
+	b := []byte("[")
 	for _, v := range routes {
-		m := map[string]string{
-			"url":    v.url,
-			"params": strings.Join(v.params[:], ","),
-		}
-		r = append(r, m)
+		str := "{\"url\":\"" + v.url + "\",\"params\":\"" + strings.Join(v.params[:], "\",\"") + "\"},"
+		b = append(b, []byte(str)...)
 	}
-	return r
+	b = append(b, []byte("]")...)
+	return b
 }
 
 func addRoute(url string, params []string, handler func(http.ResponseWriter, *http.Request, map[string]string)) {
@@ -67,7 +65,7 @@ func validParams(allowedParams []string, params map[string]string) bool {
 }
 
 func httpError(w http.ResponseWriter, url string, code int) {
-	logger.warn.Printf("%v [%v] %v \n", url, code, errCodes[code])
+	logger.err.Printf("%v [%v] %v \n", url, code, errCodes[code])
 	http.Error(w, errCodes[code], code)
 }
 
